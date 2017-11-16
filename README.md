@@ -8,7 +8,7 @@
  [![GoDoc](https://godoc.org/github.com/gin-gonic/gin?status.svg)](https://godoc.org/github.com/gin-gonic/gin)
  [![Join the chat at https://gitter.im/gin-gonic/gin](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/gin-gonic/gin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Gin是用 Go(Golang)编写的 web 框架. It features a martini-like API with much better performance, up to 40 times faster thanks to [httprouter](https://github.com/julienschmidt/httprouter). If you need performance and good productivity, you will love Gin.
+Gin是用Golang实现的一种Web框架.  基于[httprouter](https://github.com/julienschmidt/httprouter). 它提供了类似martini但更好性能(路由性能约快40倍)的API服务. 如果你希望构建一个高性能的生产环境,你会喜欢上使用 Gin
 
 ![Gin console logger](https://gin-gonic.github.io/gin/other/console.png)
 
@@ -40,7 +40,7 @@ $ go run example.go
 
 ## 基准测试
 
-Gin 使用[HttpRouter]路由(https://github.com/julienschmidt/httprouter)
+Gin 基于[HttpRouter]路由构建(https://github.com/julienschmidt/httprouter)
 
 [查看全部基准测试](/BENCHMARKS.md)
 
@@ -74,18 +74,18 @@ BenchmarkTigerTonic_GithubAll               |    1000    |  1439483    |  239104
 BenchmarkTraffic_GithubAll                  |     100    | 11383067    | 2659329    | 21848
 BenchmarkVulcan_GithubAll                   |    5000    |   394253    |   19894    |   609
 
-- (1): Total Repetitions achieved in constant time, higher means more confident result
-- (2): Single Repetition Duration (ns/op), lower is better
-- (3): Heap Memory (B/op), lower is better
-- (4): Average Allocations per Repetition (allocs/op), lower is better
+- (1): 在常数时间内实现的总重复次数, 高意味着稳定
+- (2): 单次请求耗时 (纳秒/操作), 低即好
+- (3): 堆内存大小 (B/op), 低即好
+- (4): 单次请求内存分配数 (allocs/op), 低即好
 
 ## Gin v1. 稳定版
 
-- [x] Zero allocation router.
-- [x] Still the fastest http router and framework. From routing to writing.
-- [x] Complete suite of unit tests
-- [x] Battle tested
-- [x] API frozen, new releases will not break your code.
+- [x] 零分配路由.
+- [x] 从路由到写请求, 依然为最快的路由器和框架.
+- [x] 完备的单元测试套件
+- [x] 久经考验
+- [x] API冻结, 新的release版不会影响现有的代码.
 
 ## 使用
 
@@ -95,13 +95,13 @@ BenchmarkVulcan_GithubAll                   |    5000    |   394253    |   19894
 $ go get github.com/gin-gonic/gin
 ```
 
-2. 引用到你的源码文件中:
+2. 在代码中import进来:
 
 ```go
 import "github.com/gin-gonic/gin"
 ```
 
-3. (可选) 如果使用`http.StatusOK`必须引用 `net/http`.
+3. (可选) 如果用到诸如`http.StatusOK`的常量, 需要引入 `net/http` 包.
 
 ```go
 import "net/http"
@@ -147,9 +147,9 @@ Gin 使用 `encoding/json` 作为 json 默认包,也可以选择json包,如 [jso
 $ go build -tags=jsoniter .
 ```
 
-## API 例子
+## API 示例
 
-### 使用 GET, POST, PUT, PATCH, DELETE and OPTIONS
+### 使用 GET, POST, PUT, PATCH, DELETE 及 OPTIONS
 
 ```go
 func main() {
@@ -218,7 +218,7 @@ func main() {
 }
 ```
 
-### Multipart/Urlencoded 表单
+### Multipart/Urlencoded 表单提交
 
 ```go
 func main() {
@@ -238,7 +238,7 @@ func main() {
 }
 ```
 
-### 其它例子: query + post form
+### 其它示例: query + post 表单提交
 
 ```
 POST /post?id=1234&page=1 HTTP/1.1
@@ -362,15 +362,15 @@ func main() {
 }
 ```
 
-### 不使用Gin 默认中间件
+### 不使用中间件, 使用Gin默认配置
 
-Use
+使用
 
 ```go
 r := gin.New()
 ```
 
-instead of
+来代替
 
 ```go
 // Default With the Logger and Recovery middleware already attached
@@ -441,11 +441,11 @@ func main() {
 
 ### Model模型绑定和校验
 
-To bind a request body into a type, use model binding. We currently support binding of JSON, XML and standard form values (foo=bar&boo=baz).
+要绑定一个请求body到某个类型, 使用模型绑定.目前支持JSON, XML 及标准form表单格式绑定 (foo=bar&boo=baz).
 
-Gin uses [**go-playground/validator.v8**](https://github.com/go-playground/validator) for validation. Check the full docs on tags usage [here](http://godoc.org/gopkg.in/go-playground/validator.v8#hdr-Baked_In_Validators_and_Tags).
+Gin 使用 [**go-playground/validator.v8**](https://github.com/go-playground/validator) 标准库验证模型. 标签用法完整文档 [here](http://godoc.org/gopkg.in/go-playground/validator.v8#hdr-Baked_In_Validators_and_Tags).
 
-Note that you need to set the corresponding binding tag on all fields you want to bind. For example, when binding from JSON, set `json:"fieldname"`.
+所有你想要绑定的字段(field)， 需要你设置对应的绑定标识. 例如, 要绑定到 JSON, 则这样声明`json:"fieldname"`.
 
 Also, Gin provides two sets of methods for binding:
 - **Type** - Must bind
