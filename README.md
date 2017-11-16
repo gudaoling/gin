@@ -1272,10 +1272,10 @@ func main() {
 
 ### 优雅开启和关闭
 
-Do you want to graceful restart or stop your web server?
-There are some ways this can be done.
+要优雅地重新启动或停止Web服务器吗?
+这里有一些方法可以做到这一点.
 
-We can use [fvbock/endless](https://github.com/fvbock/endless) to replace the default `ListenAndServe`. Refer issue [#296](https://github.com/gin-gonic/gin/issues/296) for more details.
+我们可以使用 [fvbock/endless](https://github.com/fvbock/endless) 替换默认的 `ListenAndServe`. 参考问题 [#296](https://github.com/gin-gonic/gin/issues/296) 获取更多详情.
 
 ```go
 router := gin.Default()
@@ -1284,13 +1284,13 @@ router.GET("/", handler)
 endless.ListenAndServe(":4242", router)
 ```
 
-An alternative to endless:
+其他选择:
 
-* [manners](https://github.com/braintree/manners): A polite Go HTTP server that shuts down gracefully.
+* [manners](https://github.com/braintree/manners):一个优雅关闭HTTP服务器的 go 程序.
 * [graceful](https://github.com/tylerb/graceful): Graceful is a Go package enabling graceful shutdown of an http.Handler server.
 * [grace](https://github.com/facebookgo/grace): Graceful restart & zero downtime deploy for Go servers.
 
-If you are using Go 1.8, you may not need to use this library! Consider using http.Server's built-in [Shutdown()](https://golang.org/pkg/net/http/#Server.Shutdown) method for graceful shutdowns. See the full [graceful-shutdown](./examples/graceful-shutdown) example with gin.
+如果你使用的是 Go 1.8, 您可以不需要使用上面那些库! 已经内置 http.Server's中  [Shutdown()](https://golang.org/pkg/net/http/#Server.Shutdown) method for graceful shutdowns. 查看 更多[graceful-shutdown](./examples/graceful-shutdown) example with gin.
 
 [embedmd]:# (examples/graceful-shutdown/graceful-shutdown/server.go go)
 ```go
@@ -1346,7 +1346,7 @@ func main() {
 
 ## 测试
 
-The `net/http/httptest` package is preferable way for HTTP testing.
+HTTP测试包 `net/http/httptest` .
 
 ```go
 package main
@@ -1365,7 +1365,7 @@ func main() {
 }
 ```
 
-Test for code example above:
+测试上面的代码示例:
 
 ```go
 package main
@@ -1390,9 +1390,9 @@ func TestPingRoute(t *testing.T) {
 }
 ```
 
-## Users  [![Sourcegraph](https://sourcegraph.com/github.com/gin-gonic/gin/-/badge.svg)](https://sourcegraph.com/github.com/gin-gonic/gin?badge)
+## 用户  [![Sourcegraph](https://sourcegraph.com/github.com/gin-gonic/gin/-/badge.svg)](https://sourcegraph.com/github.com/gin-gonic/gin?badge)
 
-Awesome project lists using [Gin](https://github.com/gin-gonic/gin) web framework.
+极好项目列表管理使用 [Gin](https://github.com/gin-gonic/gin) web 框架.
 
-* [drone](https://github.com/drone/drone): Drone is a Continuous Delivery platform built on Docker, written in Go
-* [gorush](https://github.com/appleboy/gorush): A push notification server written in Go.
+* [drone](https://github.com/drone/drone): drone是一个go语言写的运行在 Docker的持续集成软件
+* [gorush](https://github.com/appleboy/gorush): 基于Go 的推送通知服务器.
