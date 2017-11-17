@@ -13,7 +13,7 @@ Gin是用Golang实现的一种Web框架.  基于[httprouter](https://github.com/
 ![Gin console logger](https://gin-gonic.github.io/gin/other/console.png)
 
 ```sh
-# assume the following codes in example.go file
+# 假设 example.go 文件的的代码
 $ cat example.go
 ```
 
@@ -34,7 +34,7 @@ func main() {
 ```
 
 ```
-# run example.go and visit 0.0.0.0:8080/ping on browser
+# 运行 example.go 并且访问 0.0.0.0:8080/ping 浏览
 $ go run example.go
 ```
 
