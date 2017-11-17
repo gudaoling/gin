@@ -107,7 +107,7 @@ import "github.com/gin-gonic/gin"
 import "net/http"
 ```
 
-### 使用像 [Govendor] vendor工具 (https://github.com/kardianos/govendor)
+### 使用 vendor工具,如 [Govendor] (https://github.com/kardianos/govendor)
 
 1. `go get` govendor
 
@@ -139,7 +139,7 @@ $ curl https://raw.githubusercontent.com/gin-gonic/gin/master/examples/basic/mai
 $ go run main.go
 ```
 
-## Build with [jsoniter](https://github.com/json-iterator/go)
+## 构建 [jsoniter](https://github.com/json-iterator/go)
 
 Gin 使用 `encoding/json` 作为 json 默认包,也可以选择其他 json包,如 [jsoniter](https://github.com/json-iterator/go) .
 
@@ -976,18 +976,18 @@ Date: 2017/07/01
 
 ### Multitemplate
 
-Gin allow by default use only one html.Template. Check [a multitemplate render](https://github.com/gin-contrib/multitemplate) for using features like go 1.6 `block template`.
+Gin 默认只使用一个 html.Template. 检查 [a multitemplate render](https://github.com/gin-contrib/multitemplate) 使用的特性 go 1.6 `block template`.
 
 ### 重定向
 
-Issuing a HTTP redirect is easy:
+发出HTTP重定向很容易:
 
 ```go
 r.GET("/test", func(c *gin.Context) {
 	c.Redirect(http.StatusMovedPermanently, "http://www.google.com/")
 })
 ```
-Both internal and external locations are supported.
+内部和外部的位置都受支持.
 
 
 ### 自定义中间件
@@ -997,18 +997,18 @@ func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		t := time.Now()
 
-		// Set example variable
+		// 设置实例变量
 		c.Set("example", "12345")
 
-		// before request
+		// 请求前
 
 		c.Next()
 
-		// after request
+		// 请求后
 		latency := time.Since(t)
 		log.Print(latency)
 
-		// access the status we are sending
+		// 访问我们正在发送的状态
 		status := c.Writer.Status()
 		log.Println(status)
 	}
@@ -1021,7 +1021,7 @@ func main() {
 	r.GET("/test", func(c *gin.Context) {
 		example := c.MustGet("example").(string)
 
-		// it would print: "12345"
+		// 它将打印: "12345"
 		log.Println(example)
 	})
 
@@ -1033,7 +1033,7 @@ func main() {
 ### 使用 BasicAuth() 中间件验证
 
 ```go
-// simulate some private data
+// 模拟一些私有数据
 var secrets = gin.H{
 	"foo":    gin.H{"email": "foo@bar.com", "phone": "123433"},
 	"austin": gin.H{"email": "austin@example.com", "phone": "666"},
@@ -1043,8 +1043,8 @@ var secrets = gin.H{
 func main() {
 	r := gin.Default()
 
-	// Group using gin.BasicAuth() middleware
-	// gin.Accounts is a shortcut for map[string]string
+	// 组使用 gin.BasicAuth() 中间件
+	// gin.Accounts 是 map[string]string 快捷方式
 	authorized := r.Group("/admin", gin.BasicAuth(gin.Accounts{
 		"foo":    "bar",
 		"austin": "1234",
@@ -1053,9 +1053,9 @@ func main() {
 	}))
 
 	// /admin/secrets endpoint
-	// hit "localhost:8080/admin/secrets
+	// 打开 "localhost:8080/admin/secrets
 	authorized.GET("/secrets", func(c *gin.Context) {
-		// get user, it was set by the BasicAuth middleware
+		// 获取用户，它是由BasicAuth中间件设置的
 		user := c.MustGet(gin.AuthUserKey).(string)
 		if secret, ok := secrets[user]; ok {
 			c.JSON(http.StatusOK, gin.H{"user": user, "secret": secret})
@@ -1104,7 +1104,7 @@ func main() {
 
 ### 自定义配置 HTTP 
 
-Use `http.ListenAndServe()` directly, like this:
+直接使用 `http.ListenAndServe()` , 如下:
 
 ```go
 func main() {
@@ -1112,7 +1112,7 @@ func main() {
 	http.ListenAndServe(":8080", router)
 }
 ```
-or
+或
 
 ```go
 func main() {
@@ -1131,7 +1131,7 @@ func main() {
 
 ### 支持 Let's Encrypt 证书
 
-example for 1-line LetsEncrypt HTTPS servers.
+ 1-line LetsEncrypt HTTPS servers 示例.
 
 [embedmd]:# (examples/auto-tls/example1/main.go go)
 ```go
@@ -1147,7 +1147,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	// Ping handler
+	// Ping 处理程序
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
@@ -1173,7 +1173,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	// Ping handler
+	// Ping 处理程序
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
@@ -1322,14 +1322,14 @@ func main() {
 	}
 
 	go func() {
-		// service connections
+		// 服务连接
 		if err := srv.ListenAndServe(); err != nil {
 			log.Printf("listen: %s\n", err)
 		}
 	}()
 
-	// Wait for interrupt signal to gracefully shutdown the server with
-	// a timeout of 5 seconds.
+	// 等待中断信号，以优雅地关闭服务器
+	// 超时5秒.
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
