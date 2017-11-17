@@ -1,6 +1,6 @@
-// Copyright 2014 Manu Martinez-Almeida.  All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file.
+//版权所有2014 Manu Martinez-Almeida。版权所有。
+//使用这个源代码由MIT风格管理
+//可以在LICENSE文件中找到许可证。
 
 package gin
 
@@ -19,8 +19,8 @@ const BindKey = "_gin-gonic/gin/bindkey"
 func Bind(val interface{}) HandlerFunc {
 	value := reflect.ValueOf(val)
 	if value.Kind() == reflect.Ptr {
-		panic(`Bind struct can not be a pointer. Example:
-	Use: gin.Bind(Struct{}) instead of gin.Bind(&Struct{})
+		panic(`绑定结构不能是一个指针.例如:
+	 使用: gin.Bind(Struct{}) 而不是 gin.Bind(&Struct{})
 `)
 	}
 	typ := value.Type()
@@ -47,7 +47,7 @@ func WrapH(h http.Handler) HandlerFunc {
 
 type H map[string]interface{}
 
-// MarshalXML allows type H to be used with xml.Marshal.
+// MarshalXML允许类型H与xml.Marshal一起使用。
 func (h H) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	start.Name = xml.Name{
 		Space: "",
@@ -89,7 +89,7 @@ func filterFlags(content string) string {
 func chooseData(custom, wildcard interface{}) interface{} {
 	if custom == nil {
 		if wildcard == nil {
-			panic("negotiation config is invalid")
+			panic("协商配置无效")
 		}
 		return wildcard
 	}
@@ -112,7 +112,7 @@ func parseAccept(acceptHeader string) []string {
 
 func lastChar(str string) uint8 {
 	if str == "" {
-		panic("The length of the string can't be 0")
+		panic("字符串的长度不能为0")
 	}
 	return str[len(str)-1]
 }
@@ -138,14 +138,14 @@ func resolveAddress(addr []string) string {
 	switch len(addr) {
 	case 0:
 		if port := os.Getenv("PORT"); port != "" {
-			debugPrint("Environment variable PORT=\"%s\"", port)
+			debugPrint("环境变量PORT=\"%s\"", port)
 			return ":" + port
 		}
-		debugPrint("Environment variable PORT is undefined. Using port :8080 by default")
+		debugPrint("环境变量PORT未定义，默认使用端口：8080")
 		return ":8080"
 	case 1:
 		return addr[0]
 	default:
-		panic("too much parameters")
+		panic("太多的参数")
 	}
 }
