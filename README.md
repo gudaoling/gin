@@ -40,7 +40,7 @@ $ go run example.go
 
 ## 基准测试
 
-Gin 基于[HttpRouter]路由构建(https://github.com/julienschmidt/httprouter)
+Gin 使用[HttpRouter]路由(https://github.com/julienschmidt/httprouter)的自定义版本
 
 [查看全部基准测试](/BENCHMARKS.md)
 
@@ -74,20 +74,20 @@ BenchmarkTigerTonic_GithubAll               |    1000    |  1439483    |  239104
 BenchmarkTraffic_GithubAll                  |     100    | 11383067    | 2659329    | 21848
 BenchmarkVulcan_GithubAll                   |    5000    |   394253    |   19894    |   609
 
-- (1): 在常数时间内实现的总重复次数, 高意味着稳定
-- (2): 单次请求耗时 (纳秒/操作), 低即好
-- (3): 堆内存大小 (B/op), 低即好
-- (4): 单次请求内存分配数 (allocs/op), 低即好
+- (1): 总重复次数达到的时间越长，意味着越有信心的结果
+- (2): 单次请求耗时 (纳秒/操作), 越低越好
+- (3): 堆内存大小 (B/op), 越低越好
+- (4): 单次请求内存分配数 (allocs/op), 越低越好
 
 ## Gin v1. 稳定版
 
-- [x] 零分配路由.
+- [x] 零分配路由器.
 - [x] 从路由到写请求, 依然为最快的路由器和框架.
-- [x] 完备的单元测试套件
-- [x] 久经考验
-- [x] API冻结, 新的release版不会影响现有的代码.
+- [x] 完整的单元测试套件
+- [x] 久经测试
+- [x] API冻结, 新版本不会破坏你的代码.
 
-## 使用
+## 下载并安装它
 
 1. 下载和安装:
 
@@ -95,7 +95,7 @@ BenchmarkVulcan_GithubAll                   |    5000    |   394253    |   19894
 $ go get github.com/gin-gonic/gin
 ```
 
-2. 在代码中import进来:
+2. 在你的代码中导入它:
 
 ```go
 import "github.com/gin-gonic/gin"
@@ -107,41 +107,41 @@ import "github.com/gin-gonic/gin"
 import "net/http"
 ```
 
-### 使用 vendor工具,如 [Govendor] (https://github.com/kardianos/govendor)
+### 使用像 [Govendor] 这样的vendor工具(https://github.com/kardianos/govendor)
 
 1. `go get` govendor
 
 ```sh
 $ go get github.com/kardianos/govendor
 ```
-2. 新建一个项目文件夹并使用命令`cd` 切换到里面
+2. 创建你的项目文件夹并使用命令`cd` 切换到里面
 
 ```sh
 $ mkdir -p ~/go/src/github.com/myusername/project && cd "$_"
 ```
 
-3. 使用Vendor工具初始化项目和添加到gin
+3. 使用Vendor初始化您的项目并添加到gin
 
 ```sh
 $ govendor init
 $ govendor fetch github.com/gin-gonic/gin@v1.2
 ```
 
-4. 下载启动模板到项目中
+4. 在项目中复制起始模板
 
 ```sh
 $ curl https://raw.githubusercontent.com/gin-gonic/gin/master/examples/basic/main.go > main.go
 ```
 
-5. 运行项目
+5. 运行你的项目
 
 ```sh
 $ go run main.go
 ```
 
-## 构建 [jsoniter](https://github.com/json-iterator/go)
+## 用 [jsoniter]构建(https://github.com/json-iterator/go)
 
-Gin 使用 `encoding/json` 作为 json 默认包,也可以选择其他 json包,如 [jsoniter](https://github.com/json-iterator/go) .
+Gin 使用 `encoding/json` 作默认的json包，但你可以通过从其他标签建立更改为 [jsoniter](https://github.com/json-iterator/go) .
 
 ```sh
 $ go build -tags=jsoniter .
@@ -156,8 +156,8 @@ func main() {
 	// 禁用控制台显示颜色
 	// gin.DisableConsoleColor()
 
-	// 创建 gin 默认中间件路由:
-	// logger and recovery (crash-free) middleware
+	// 使用默认中间件创建gin 路由器:
+	// logger和recovery（无崩溃）中间件
 	router := gin.Default()
 
 	router.GET("/someGet", getting)
@@ -168,10 +168,10 @@ func main() {
 	router.HEAD("/someHead", head)
 	router.OPTIONS("/someOptions", options)
 
-	// By default it serves on :8080 unless a
-	// PORT environment variable was defined.
+	// 默认端口服务为 :8080 
+	// 除非定义了一个// PORT环境变量.
 	router.Run()
-	// router.Run(":3000") for a hard coded port
+	// router.Run(":3000") 设置端口 
 }
 ```
 
@@ -181,13 +181,13 @@ func main() {
 func main() {
 	router := gin.Default()
 
-	// 这个处理程序将匹配/user/john .但 /user/ 或 /user 两者都不匹配
+	// 这个处理程序将匹配/user/john .但不会匹配 /user/ 或 /user 
 	router.GET("/user/:name", func(c *gin.Context) {
 		name := c.Param("name")
 		c.String(http.StatusOK, "Hello %s", name)
 	})
 
-	// 然而， 这个将会匹配/user/john/ 和 /user/john/send 
+	// 然而，这个匹配/user/john/ 和 /user/john/send 
 	// 如果没有其他路由器匹配 /user/john, 它将重定向到 /user/john/
 	router.GET("/user/:name/*action", func(c *gin.Context) {
 		name := c.Param("name")
@@ -206,7 +206,7 @@ func main() {
 func main() {
 	router := gin.Default()
 
-	// 查询字符串参数使用现有的底层请求对象进行解析.
+	// 查询字符串参数使用现有的底层请求对象进行分析.
 	// 请求响应一个url匹配:  /welcome?firstname=Jane&lastname=Doe
 	router.GET("/welcome", func(c *gin.Context) {
 		firstname := c.DefaultQuery("firstname", "Guest")
@@ -272,7 +272,7 @@ id: 1234; page: 1; name: manu; message: this_is_great
 
 #### 单文件上传
 
-参考问题 [#774](https://github.com/gin-gonic/gin/issues/774) 和示例 [example code](examples/upload-file/single).
+参考问题 [#774](https://github.com/gin-gonic/gin/issues/774) 和详细 [示例代码](examples/upload-file/single).
 
 ```go
 func main() {
@@ -303,7 +303,7 @@ curl -X POST http://localhost:8080/upload \
 
 #### 多文件上传
 
-示例代码 [example code](examples/upload-file/multiple).
+查看详细的 [示例代码](examples/upload-file/multiple).
 
 ```go
 func main() {
@@ -373,7 +373,7 @@ r := gin.New()
 来代替
 
 ```go
-// 已经附加了日志记录器和恢复中间件的默认值
+// 默认附加了日志记录器和恢复中间件
 r := gin.Default()
 ```
 
@@ -384,18 +384,18 @@ func main() {
 	// 创建一个没有任何中间的路由(需要中间件时使用Use加入)
 	r := gin.New()
 
-	// 全局中间
-	// 日志记录器中间件将写到 gin.DefaultWriter, 即使设置了 GIN_MODE=release模式.
-	// 默认标准输出 gin.DefaultWriter = os.Stdout
+	// 全局中间件
+	// Logger中间件将把日志写入 gin.DefaultWriter,即使你使用 GIN_MODE=release来设置.
+	// 默认情况下标准输出 gin.DefaultWriter = os.Stdout
 	r.Use(gin.Logger())
 
-	// Recovery 恢复中间件从任何恐慌中恢复并返回http状态码500.
+	// 恢复中间件从任何恐慌中恢复并返回http状态码500.
 	r.Use(gin.Recovery())
 
-	// 在每个路由中间件中，可以任意添加.
+	// 每个路由中间件,你可以添加任意多的你想要.
 	r.GET("/benchmark", MyBenchLogger(), benchEndpoint)
 
-	// 授权分组
+	// 授权组
 	// authorized := r.Group("/", AuthRequired())
 	// 也可以这样授权分组:
 	authorized := r.Group("/")
@@ -420,14 +420,14 @@ func main() {
 ### 日志写入文件
 ```go
 func main() {
-    // 禁用控制台的颜色, 在将日志写入文件时，不需要控制台颜色.
+    // 禁用控制台颜色，将日志写入文件时不需要控制台颜色.
     gin.DisableConsoleColor()
 
-    // 日志记录到一个文件.
+    // 记录到文件 .
     f, _ := os.Create("gin.log")
     gin.DefaultWriter = io.MultiWriter(f)
 
-    // 如果需要同时将日志写到文件和控制台，请使用以下代码.
+    // 如果您需要同时将日志写入文件和控制台，请使用以下代码.
     // gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 
     router := gin.Default()
@@ -439,21 +439,21 @@ func main() {
 }
 ```
 
-### Model模型绑定和校验
+### Model模型绑定和验证
 
-要绑定一个请求body到某个类型, 使用模型绑定.目前支持JSON, XML 及标准form表单格式绑定 (foo=bar&boo=baz).
+要将请求主体绑定到一个类型，使用模型绑定.我们目前支持绑定 JSON, XML 及标准form表单值 (foo=bar&boo=baz).
 
-Gin 使用 [**go-playground/validator.v8**](https://github.com/go-playground/validator) 标准库验证模型. 标签用法完整文档 [here](http://godoc.org/gopkg.in/go-playground/validator.v8#hdr-Baked_In_Validators_and_Tags).
+Gin 使用 [**go-playground/validator.v8**](https://github.com/go-playground/validator) 进行验证.  在[这里]查看关于标签使用情况的完整文档(http://godoc.org/gopkg.in/go-playground/validator.v8#hdr-Baked_In_Validators_and_Tags).
 
-所有你想要绑定的字段(field)， 需要你设置对应的绑定标识. 例如, 要绑定到 JSON, 则这样声明`json:"fieldname"`.
+请注意，您需要在要绑定的所有字段上设置相应的绑定标签, 例如，从JSON绑定时，设置`json:"fieldname"`.
 
-此外，Gin还提供了两套结合的方法:
-- **Type** - 必须绑定
-  - **Methods** - `Bind`, `BindJSON`, `BindQuery`
-  - **Behavior** - 这些方法使用引擎盖下 `MustBindWith` . 如果存在绑定错误，则请求中止 `c.AbortWithError(400, err).SetType(ErrorTypeBind)`. 这将响应状态代码设置为 400 并且 `Content-Type` 请求头设置为 `text/plain; charset=utf-8`. 注意设置响应代码 之后, 它会引起一个警告 `[GIN-debug] [WARNING] Headers were already written. Wanted to override status code 400 with 422`. 如果你想对行为有更大的控制, 考虑使用 `ShouldBind`  相近的方法.
-- **Type** - 应该绑定
-  - **Methods** - `ShouldBind`, `ShouldBindJSON`, `ShouldBindQuery`
-  - **Behavior** - 这些方法使用引擎盖下 `ShouldBindWith` .如果存在绑定错误,开发人员有责任恰当地处理请求和错误.
+另外，Gin还提供了两套绑定方法:
+- **类型** - 必须绑定
+  - **方法** - `Bind`, `BindJSON`, `BindQuery`
+  - **行为** - 这些方法使用引擎盖下 `MustBindWith` . 如果存在绑定错误，则请求中止 `c.AbortWithError(400, err).SetType(ErrorTypeBind)`. 这将响应状态代码设置为 400 并且 `Content-Type` 请求头设置为 `text/plain; charset=utf-8`. 注意设置响应代码 之后, 它会引起一个警告 `[GIN-debug] [WARNING] Headers were already written. Wanted to override status code 400 with 422`. 如果你想对行为有更大的控制, 考虑使用 `ShouldBind`  相近的方法.
+- **类型** - 应该绑定
+  - **方法** - `ShouldBind`, `ShouldBindJSON`, `ShouldBindQuery`
+  - **行为** - 这些方法使用引擎盖下 `ShouldBindWith` .如果存在绑定错误,开发人员有责任恰当地处理请求和错误.
 
 在使用 Bind-method 绑定方法时, Gin 根据内容类型请求头 Content-Type header推断绑定. 如果你设置一些约束力,你可以使用 `MustBindWith` 或 `ShouldBindWith`.
 
