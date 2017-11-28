@@ -344,15 +344,15 @@ func (c *Context) GetQuery(key string) (string, bool) {
 	return "", false
 }
 
-// QueryArray returns a slice of strings for a given query key.
-// The length of the slice depends on the number of params with the given key.
+// QueryArray 返回 给定查询键的切片字符串 .
+// 切片的长度取决于给定键的params的数量.
 func (c *Context) QueryArray(key string) []string {
 	values, _ := c.GetQueryArray(key)
 	return values
 }
 
-// GetQueryArray returns a slice of strings for a given query key, plus
-// a boolean value whether at least one value exists for the given key.
+//GetQueryArray返回给定查询键的切片字符串，加上
+//一个布尔值，对于给定的键是否至少存在一个值.
 func (c *Context) GetQueryArray(key string) ([]string, bool) {
 	if values, ok := c.Request.URL.Query()[key]; ok && len(values) > 0 {
 		return values, true
@@ -360,16 +360,16 @@ func (c *Context) GetQueryArray(key string) ([]string, bool) {
 	return []string{}, false
 }
 
-// PostForm returns the specified key from a POST urlencoded form or multipart form
-// when it exists, otherwise it returns an empty string `("")`.
+// PostForm 从一个urlencoded 的表单或multipart 表单返回指定键的值，如果存在时。
+// 否则返回一个空的字符串 `("")`.
 func (c *Context) PostForm(key string) string {
 	value, _ := c.GetPostForm(key)
 	return value
 }
 
-// DefaultPostForm returns the specified key from a POST urlencoded form or multipart form
-// when it exists, otherwise it returns the specified defaultValue string.
-// See: PostForm() and GetPostForm() for further information.
+// DefaultPostForm 从一个urlencoded 的表单或multipart 表单返回指定键的值，如果存在时。
+//否则返回指定的defaultValue默认值.
+// 查看: PostForm() 和GetPostForm() 进一步的信息.
 func (c *Context) DefaultPostForm(key, defaultValue string) string {
 	if value, ok := c.GetPostForm(key); ok {
 		return value
@@ -377,13 +377,13 @@ func (c *Context) DefaultPostForm(key, defaultValue string) string {
 	return defaultValue
 }
 
-// GetPostForm is like PostForm(key). It returns the specified key from a POST urlencoded
-// form or multipart form when it exists `(value, true)` (even when the value is an empty string),
-// otherwise it returns ("", false).
-// For example, during a PATCH request to update the user's email:
-//     email=mail@example.com  -->  ("mail@example.com", true) := GetPostForm("email") // set email to "mail@example.com"
-// 	   email=                  -->  ("", true) := GetPostForm("email") // set email to ""
-//                             -->  ("", false) := GetPostForm("email") // do nothing with email
+// GetPostForm 类似 PostForm(key).从一个urlencoded 的表单或multipart 表单返回指定键的`(value, true)`值，如果存在时 。
+// (即使当前值是空字符串时),
+// 否则返回 ("", false).
+// 例如, 在一個PATCH 请求去修改  用户email:
+//     email=mail@example.com  -->  ("mail@example.com", true) := GetPostForm("email") // 设置 email to "mail@example.com"
+// 	   email=                  -->  ("", true) := GetPostForm("email") // 设置email to ""
+//                             -->  ("", false) := GetPostForm("email") // 什么都不做的 email
 func (c *Context) GetPostForm(key string) (string, bool) {
 	if values, ok := c.GetPostFormArray(key); ok {
 		return values[0], ok
@@ -391,15 +391,15 @@ func (c *Context) GetPostForm(key string) (string, bool) {
 	return "", false
 }
 
-// PostFormArray returns a slice of strings for a given form key.
-// The length of the slice depends on the number of params with the given key.
+//PostFormArray为给定的表单键返回一个切片字符串。
+//这个切片的长度取决于给定键的params的数量。
 func (c *Context) PostFormArray(key string) []string {
 	values, _ := c.GetPostFormArray(key)
 	return values
 }
 
-// GetPostFormArray returns a slice of strings for a given form key, plus
-// a boolean value whether at least one value exists for the given key.
+//GetPostFormArray为给定的表单键返回一个切片字符串。
+//返回一个布尔值，对于给定的键是否至少存在一个值。
 func (c *Context) GetPostFormArray(key string) ([]string, bool) {
 	req := c.Request
 	req.ParseForm()
@@ -415,19 +415,19 @@ func (c *Context) GetPostFormArray(key string) ([]string, bool) {
 	return []string{}, false
 }
 
-// FormFile returns the first file for the provided form key.
+// FormFile返回提供的表单键的第一个文件.
 func (c *Context) FormFile(name string) (*multipart.FileHeader, error) {
 	_, fh, err := c.Request.FormFile(name)
 	return fh, err
 }
 
-// MultipartForm is the parsed multipart form, including file uploads.
+// MultipartForm  是解析的multipart 表单，包括文件上传 .
 func (c *Context) MultipartForm() (*multipart.Form, error) {
 	err := c.Request.ParseMultipartForm(c.engine.MaxMultipartMemory)
 	return c.Request.MultipartForm, err
 }
 
-// SaveUploadedFile uploads the form file to specific dst.
+// SaveUploadedFile 将表单文件上传到特定的dst.
 func (c *Context) SaveUploadedFile(file *multipart.FileHeader, dst string) error {
 	src, err := file.Open()
 	if err != nil {
@@ -445,32 +445,32 @@ func (c *Context) SaveUploadedFile(file *multipart.FileHeader, dst string) error
 	return nil
 }
 
-// Bind checks the Content-Type to select a binding engine automatically,
-// Depending the "Content-Type" header different bindings are used:
+// 绑定检查Content-Type以自动选择绑定引擎,
+// 根据the "Content-Type" header 使用不同的绑定 :
 //     "application/json" --> JSON binding
 //     "application/xml"  --> XML binding
-// otherwise --> returns an error
-// It parses the request's body as JSON if Content-Type == "application/json" using JSON or XML as a JSON input.
-// It decodes the json payload into the struct specified as a pointer.
-// It will writes a 400 error and sets Content-Type header "text/plain" in the response if input is not valid.
+// 否则--> 返回一个错误
+//它将请求的body解析为JSON，如果Content-Type == "application/json"使用JSON或XML作为JSON输入。
+//它将json有效值解码为指定为指针的结构体。
+//如果输入无效，它将在响应中写入400个错误并设置 Content-Type header "text/plain" 。
 func (c *Context) Bind(obj interface{}) error {
 	b := binding.Default(c.Request.Method, c.ContentType())
 	return c.MustBindWith(obj, b)
 }
 
-// BindJSON is a shortcut for c.MustBindWith(obj, binding.JSON).
+// BindJSON 是 c.MustBindWith(obj, binding.JSON) 快捷方式.
 func (c *Context) BindJSON(obj interface{}) error {
 	return c.MustBindWith(obj, binding.JSON)
 }
 
-// BindQuery is a shortcut for c.MustBindWith(obj, binding.Query).
+// BindQuery 是 c.MustBindWith(obj, binding.Query) 快捷方式.
 func (c *Context) BindQuery(obj interface{}) error {
 	return c.MustBindWith(obj, binding.Query)
 }
 
-// MustBindWith binds the passed struct pointer using the specified binding engine.
-// It will abort the request with HTTP 400 if any error ocurrs.
-// See the binding package.
+//MustBindWith  绑定使用指定的绑定引擎将传递的struct指针绑定在一起。
+//如果有任何错误的ocurrs，它将以HTTP 400的请求终止请求。
+//看到binding包。
 func (c *Context) MustBindWith(obj interface{}, b binding.Binding) (err error) {
 	if err = c.ShouldBindWith(obj, b); err != nil {
 		c.AbortWithError(400, err).SetType(ErrorTypeBind)
@@ -479,38 +479,38 @@ func (c *Context) MustBindWith(obj interface{}, b binding.Binding) (err error) {
 	return
 }
 
-// ShouldBind checks the Content-Type to select a binding engine automatically,
-// Depending the "Content-Type" header different bindings are used:
+//ShouldBind  Content-Type  来自动选择一个绑定引擎，
+//根据"Content-Type" header 标题不同的绑定使用:
 //     "application/json" --> JSON binding
 //     "application/xml"  --> XML binding
-// otherwise --> returns an error
-// It parses the request's body as JSON if Content-Type == "application/json" using JSON or XML as a JSON input.
-// It decodes the json payload into the struct specified as a pointer.
-// Like c.Bind() but this method does not set the response status code to 400 and abort if the json is not valid.
+// 否则--> 返回一个错误
+//它将请求的body 解析为JSON，如果Content-Type == "application/json"使用JSON或XML作为JSON输入。
+//它将json有效值解码为指定为指针的结构体。
+//类似于c.bind()但是这种方法不会将响应状态代码设置为400，如果json不是有效的就会中止。
 func (c *Context) ShouldBind(obj interface{}) error {
 	b := binding.Default(c.Request.Method, c.ContentType())
 	return c.ShouldBindWith(obj, b)
 }
 
-// ShouldBindJSON is a shortcut for c.ShouldBindWith(obj, binding.JSON).
+// ShouldBindJSON 是 c.ShouldBindWith(obj, binding.JSON)快捷方式.
 func (c *Context) ShouldBindJSON(obj interface{}) error {
 	return c.ShouldBindWith(obj, binding.JSON)
 }
 
-// ShouldBindQuery is a shortcut for c.ShouldBindWith(obj, binding.Query).
+// ShouldBindQuery 是 c.ShouldBindWith(obj, binding.Query) 快捷方式.
 func (c *Context) ShouldBindQuery(obj interface{}) error {
 	return c.ShouldBindWith(obj, binding.Query)
 }
 
-// ShouldBindWith binds the passed struct pointer using the specified binding engine.
-// See the binding package.
+// ShouldBindWith使用指定的绑定引擎将传递的结构指针绑定在一起.
+// 查看binding 包.
 func (c *Context) ShouldBindWith(obj interface{}, b binding.Binding) error {
 	return b.Bind(c.Request, obj)
 }
 
-// ClientIP implements a best effort algorithm to return the real client IP, it parses
-// X-Real-IP and X-Forwarded-For in order to work properly with reverse-proxies such us: nginx or haproxy.
-// Use X-Forwarded-For before X-Real-Ip as nginx uses X-Real-Ip with the proxy's IP.
+//ClientIP实现了一个最好的算法来返回真正的客户端IP，它解析
+//x-real-ip和x-代理，以便能正确地使用反向代理，如nginx或haproxy。
+//在x-real-IP之前使用x-实数，因为nginx使用了x-实数IP和代理的IP。
 func (c *Context) ClientIP() string {
 	if c.engine.ForwardedByClientIP {
 		clientIP := c.requestHeader("X-Forwarded-For")
@@ -540,13 +540,13 @@ func (c *Context) ClientIP() string {
 	return ""
 }
 
-// ContentType returns the Content-Type header of the request.
+// ContentType 返回请求 Content-Type 的header .
 func (c *Context) ContentType() string {
 	return filterFlags(c.requestHeader("Content-Type"))
 }
 
-// IsWebsocket returns true if the request headers indicate that a websocket
-// handshake is being initiated by the client.
+//IsWebsocket 返回true，如果请求头指示一个websocket
+//handshake（握手）是由客户发起的。
 func (c *Context) IsWebsocket() bool {
 	if strings.Contains(strings.ToLower(c.requestHeader("Connection")), "upgrade") &&
 		strings.ToLower(c.requestHeader("Upgrade")) == "websocket" {
@@ -563,7 +563,7 @@ func (c *Context) requestHeader(key string) string {
 /******** 响应渲染 ********/
 /************************************/
 
-// bodyAllowedForStatus is a copy of http.bodyAllowedForStatus non-exported function.
+//bodyAllowedForStatus  是一个http http.bodyAllowedForStatus  non-exported函数的副本
 func bodyAllowedForStatus(status int) bool {
 	switch {
 	case status >= 100 && status <= 199:
@@ -576,14 +576,14 @@ func bodyAllowedForStatus(status int) bool {
 	return true
 }
 
-// Status sets the HTTP response code.
+// Status 设置 HTTP 响应码.
 func (c *Context) Status(code int) {
 	c.writermem.WriteHeader(code)
 }
 
-// Header is a intelligent shortcut for c.Writer.Header().Set(key, value).
-// It writes a header in the response.
-// If value == "", this method removes the header `c.Writer.Header().Del(key)`
+////Header是c.Writer.Header().Set(key, value)的一种智能快捷方式  .
+// 它在响应中写入一个header .
+// 如果 value == "",header 会删除`c.Writer.Header().Del(key)`
 func (c *Context) Header(key, value string) {
 	if value == "" {
 		c.Writer.Header().Del(key)
@@ -592,19 +592,19 @@ func (c *Context) Header(key, value string) {
 	}
 }
 
-// GetHeader returns value from request headers.
+// GetHeader 从请求headers返回值.
 func (c *Context) GetHeader(key string) string {
 	return c.requestHeader(key)
 }
 
-// GetRawData return stream data.
+// GetRawData 返回数据流.
 func (c *Context) GetRawData() ([]byte, error) {
 	return ioutil.ReadAll(c.Request.Body)
 }
 
-// SetCookie adds a Set-Cookie header to the ResponseWriter's headers.
-// The provided cookie must have a valid Name. Invalid cookies may be
-// silently dropped.
+// SetCookie 添加一个 Set-Cookie header 到ResponseWriter's headers.
+//提供的cookie 必须有一个有效的名称。无效的cookies 可能
+//默默地下降。
 func (c *Context) SetCookie(name, value string, maxAge int, path, domain string, secure, httpOnly bool) {
 	if path == "" {
 		path = "/"
@@ -620,10 +620,10 @@ func (c *Context) SetCookie(name, value string, maxAge int, path, domain string,
 	})
 }
 
-// Cookie returns the named cookie provided in the request or
-// ErrNoCookie if not found. And return the named cookie is unescaped.
-// If multiple cookies match the given name, only one cookie will
-// be returned.
+//Cookie返回请求中提供的指定Cookie
+如果找不到的话。返回指定的cookie是不可转义的。
+//如果多个cookie与给定的名称匹配，只有一个cookie
+/ /返回。
 func (c *Context) Cookie(name string) (string, error) {
 	cookie, err := c.Request.Cookie(name)
 	if err != nil {
@@ -647,52 +647,55 @@ func (c *Context) Render(code int, r render.Render) {
 	}
 }
 
-// HTML renders the HTTP template specified by its file name.
-// It also updates the HTTP code and sets the Content-Type as "text/html".
-// See http://golang.org/doc/articles/wiki/
+//HTML 渲染由其文件名指定的HTTP模板。
+//它还更新HTTP代码，并将 Content-Type设置为"text/html"。
+// 查看http://golang.org/doc/articles/wiki/
+
 func (c *Context) HTML(code int, name string, obj interface{}) {
 	instance := c.engine.HTMLRender.Instance(name, obj)
 	c.Render(code, instance)
 }
 
-// IndentedJSON serializes the given struct as pretty JSON (indented + endlines) into the response body.
-// It also sets the Content-Type as "application/json".
-// WARNING: we recommend to use this only for development purposes since printing pretty JSON is
-// more CPU and bandwidth consuming. Use Context.JSON() instead.
+//缩进JSON将给定的结构体序列化为一个漂亮的JSON(缩进的+endlines)到响应体中。
+//它还将内容类型设置为"application/json"。
+//警告:我们建议只用于开发目的，因为打印漂亮的JSON是
+//更多的CPU和带宽消耗。使用Context.JSON()代替。
 func (c *Context) IndentedJSON(code int, obj interface{}) {
 	c.Render(code, render.IndentedJSON{Data: obj})
 }
 
-// SecureJSON serializes the given struct as Secure JSON into the response body.
-// Default prepends "while(1)," to response body if the given struct is array values.
-// It also sets the Content-Type as "application/json".
+//将给定的结构体序列化为安全的JSON到响应体中。
+//默认预惩罚"while(1),"如果给定的结构是数组值，则响应正文。
+//它还将内容类型设置为"application/json"。
 func (c *Context) SecureJSON(code int, obj interface{}) {
 	c.Render(code, render.SecureJSON{Prefix: c.engine.secureJsonPrefix, Data: obj})
 }
 
-// JSON serializes the given struct as JSON into the response body.
-// It also sets the Content-Type as "application/json".
+
+//JSON将给定的结构体序列化为JSON到响应体中。
+//它还将内容类型设置为"application/json".。
 func (c *Context) JSON(code int, obj interface{}) {
 	c.Render(code, render.JSON{Data: obj})
 }
 
-// XML serializes the given struct as XML into the response body.
-// It also sets the Content-Type as "application/xml".
+
+//XML 将给定的结构体序列化为XML 到响应体中。
+//它还将内容类型设置为"application/xml".。
 func (c *Context) XML(code int, obj interface{}) {
 	c.Render(code, render.XML{Data: obj})
 }
 
-// YAML serializes the given struct as YAML into the response body.
+//YAML 将给定的结构体序列化为YAML 到响应体中。
 func (c *Context) YAML(code int, obj interface{}) {
 	c.Render(code, render.YAML{Data: obj})
 }
 
-// String writes the given string into the response body.
+// String 将给定的结构体序列化为字符串 到响应体中.
 func (c *Context) String(code int, format string, values ...interface{}) {
 	c.Render(code, render.String{Format: format, Data: values})
 }
 
-// Redirect returns a HTTP redirect to the specific location.
+// Redirect 返回一个HTTP 重定向到指定的位置.
 func (c *Context) Redirect(code int, location string) {
 	c.Render(-1, render.Redirect{
 		Code:     code,
@@ -701,7 +704,7 @@ func (c *Context) Redirect(code int, location string) {
 	})
 }
 
-// Data writes some data into the body stream and updates the HTTP code.
+// Data在正文流中写入一些数据，并更新HTTP代码.
 func (c *Context) Data(code int, contentType string, data []byte) {
 	c.Render(code, render.Data{
 		ContentType: contentType,
@@ -709,12 +712,12 @@ func (c *Context) Data(code int, contentType string, data []byte) {
 	})
 }
 
-// File writes the specified file into the body stream in a efficient way.
+//File 以一种有效的方式将指定的文件写入到正文流中
 func (c *Context) File(filepath string) {
 	http.ServeFile(c.Writer, c.Request, filepath)
 }
 
-// SSEvent writes a Server-Sent Event into the body stream.
+// SSEvent 将一个Server-Sent 事件写入到正文流中.
 func (c *Context) SSEvent(name string, message interface{}) {
 	c.Render(-1, sse.Event{
 		Event: name,
