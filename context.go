@@ -22,7 +22,7 @@ import (
 	"github.com/gin-gonic/gin/render"
 )
 
-// Content-Type MIME of the most common data formats.
+// 常见数据格式 content-Type  MIME.
 const (
 	MIMEJSON              = binding.MIMEJSON
 	MIMEHTML              = binding.MIMEHTML
@@ -35,8 +35,8 @@ const (
 
 const abortIndex int8 = math.MaxInt8 / 2
 
-// Context is the most important part of gin. It allows us to pass variables between middleware,
-// manage the flow, validate the JSON of a request and render a JSON response for example.
+// 上下文是gin中最重要的部分. 它允许我们在中间件之间传递变量,
+// 管理数据流, 验证请求的JSON 和 呈现一个JSON响应.
 type Context struct {
 	writermem responseWriter
 	Request   *http.Request
@@ -48,18 +48,18 @@ type Context struct {
 
 	engine *Engine
 
-	// Keys is a key/value pair exclusively for the context of each request.
+	// 键是一个键/值对，只适用于每个请求的上下文.
 	Keys map[string]interface{}
 
-	// Errors is a list of errors attached to all the handlers/middlewares who used this context.
+	// 错误是附加到使用此上下文的所有处理程序/中间件的错误列表.
 	Errors errorMsgs
 
-	// Accepted defines a list of manually accepted formats for content negotiation.
+	// 已接受的定义了内容协商的手动接受格式列表.
 	Accepted []string
 }
 
 /************************************/
-/********** CONTEXT CREATION ********/
+/********** 上下文创建 ********/
 /************************************/
 
 func (c *Context) reset() {
@@ -72,8 +72,8 @@ func (c *Context) reset() {
 	c.Accepted = nil
 }
 
-// Copy returns a copy of the current context that can be safely used outside the request's scope.
-// This has to be used when the context has to be passed to a goroutine.
+// 复制返回当前上下文的一个副本，可以安全地在请求的范围之外使用.
+// 当上下文必须传递到goroutine时，必须使用此方法.
 func (c *Context) Copy() *Context {
 	var cp = *c
 	cp.writermem.ResponseWriter = nil
@@ -83,24 +83,24 @@ func (c *Context) Copy() *Context {
 	return &cp
 }
 
-// HandlerName returns the main handler's name. For example if the handler is "handleGetUsers()",
-// this function will return "main.handleGetUsers".
+// HandlerName返回主处理程序的名称。例如，如果处理程序是"handleGetUsers()",
+// 这个函数将返回 "main.handleGetUsers".
 func (c *Context) HandlerName() string {
 	return nameOfFunction(c.handlers.Last())
 }
 
-// Handler returns the main handler.
+// Handler 返回 main handler.
 func (c *Context) Handler() HandlerFunc {
 	return c.handlers.Last()
 }
 
 /************************************/
-/*********** FLOW CONTROL ***********/
+/*********** 流控制 ***********/
 /************************************/
 
-// Next should be used only inside middleware.
-// It executes the pending handlers in the chain inside the calling handler.
-// See example in GitHub.
+//接下来应该只在中间件内部使用.
+// 它在调用处理程序内的链中执行挂起的处理程序It executes the pending handlers in the chain inside the calling handler.
+// 在GitHub看到例子.
 func (c *Context) Next() {
 	c.index++
 	for s := int8(len(c.handlers)); c.index < s; c.index++ {
