@@ -99,7 +99,7 @@ func (c *Context) Handler() HandlerFunc {
 /************************************/
 
 //接下来应该只在中间件内部使用.
-// 它在调用处理程序内的链中执行挂起的处理程序It executes the pending handlers in the chain inside the calling handler.
+// 它在调用处理程序内的链中执行挂起的处理程序（挂起，程序放到后台，程序没有结束）.
 // 在GitHub看到例子.
 func (c *Context) Next() {
 	c.index++
@@ -108,37 +108,37 @@ func (c *Context) Next() {
 	}
 }
 
-// IsAborted returns true if the current context was aborted.
+// 如果当前上下文被中止，则IsAborted返回true.
 func (c *Context) IsAborted() bool {
 	return c.index >= abortIndex
 }
 
-// Abort prevents pending handlers from being called. Note that this will not stop the current handler.
-// Let's say you have an authorization middleware that validates that the current request is authorized.
-// If the authorization fails (ex: the password does not match), call Abort to ensure the remaining handlers
-// for this request are not called.
+// Abort防止挂起的处理程序被调用。注意，这不会停止当前的处理程序.
+// 假设您有一个授权中间件，它验证当前请求是否被授权.
+// 如果授权失败 (ex: the password does not match),调用Abort确保该请求的剩余处理程序
+// 不被调用 .
 func (c *Context) Abort() {
 	c.index = abortIndex
 }
 
-// AbortWithStatus calls `Abort()` and writes the headers with the specified status code.
-// For example, a failed attempt to authenticate a request could use: context.AbortWithStatus(401).
+// AbortWithStatus 调用 `Abort()` 和 用指定的状态码写入headers.
+// 例如，对请求进行身份验证的失败尝试可以使用: context.AbortWithStatus(401).
 func (c *Context) AbortWithStatus(code int) {
 	c.Status(code)
 	c.Writer.WriteHeaderNow()
 	c.Abort()
 }
 
-// AbortWithStatusJSON calls `Abort()` and then `JSON` internally.
-// This method stops the chain, writes the status code and return a JSON body.
+// AbortWithStatusJSON 调用 `Abort()` 并添加 `JSON` .
+// 此方法停止链，写入状态代码并返回JSON主体.
 // It also sets the Content-Type as "application/json".
 func (c *Context) AbortWithStatusJSON(code int, jsonObj interface{}) {
 	c.Abort()
 	c.JSON(code, jsonObj)
 }
 
-// AbortWithError calls `AbortWithStatus()` and `Error()` internally.
-// This method stops the chain, writes the status code and pushes the specified error to `c.Errors`.
+// AbortWithError 调用 `AbortWithStatus()` 和 `Error()` .
+// 此方法停止链, 写入状态代码并将指定的错误推到 `c.Errors`.
 // See Context.Error() for more details.
 func (c *Context) AbortWithError(code int, err error) *Error {
 	c.AbortWithStatus(code)
@@ -146,14 +146,14 @@ func (c *Context) AbortWithError(code int, err error) *Error {
 }
 
 /************************************/
-/********* ERROR MANAGEMENT *********/
+/********* 错误管理 *********/
 /************************************/
 
-// Error attaches an error to the current context. The error is pushed to a list of errors.
-// It's a good idea to call Error for each error that occurred during the resolution of a request.
-// A middleware can be used to collect all the errors and push them to a database together,
-// print a log, or append it in the HTTP response.
-// Error will panic if err is nil.
+// Error将错误附加到当前上下文. 错误被推到一个错误列表中.
+// 对于在请求的解析过程中发生的每个错误，调用错误是一个好主意.
+// 一个中间件可以用来收集所有的错误，并将它们推到一个数据库中,
+// 打印日志，或者在HTTP响应中附加它.
+// 如果err为nil，错误将会引起恐慌.
 func (c *Context) Error(err error) *Error {
 	if err == nil {
 		panic("err is nil")
@@ -173,11 +173,11 @@ func (c *Context) Error(err error) *Error {
 }
 
 /************************************/
-/******** METADATA MANAGEMENT********/
+/******** 元数据管理 ********/
 /************************************/
 
-// Set is used to store a new key/value pair exclusively for this context.
-// It also lazy initializes  c.Keys if it was not used previously.
+// Set用于为这个上下文专门存储一个新的键/值对.
+//  如果不是之前使用的键 它还会初始化 c.Keys.
 func (c *Context) Set(key string, value interface{}) {
 	if c.Keys == nil {
 		c.Keys = make(map[string]interface{})
@@ -185,14 +185,14 @@ func (c *Context) Set(key string, value interface{}) {
 	c.Keys[key] = value
 }
 
-// Get returns the value for the given key, ie: (value, true).
-// If the value does not exists it returns (nil, false)
+// Get返回给定键的值, 即: (value, true).
+// 如果值不存在，它就返回 (nil, false)
 func (c *Context) Get(key string) (value interface{}, exists bool) {
 	value, exists = c.Keys[key]
 	return
 }
 
-// MustGet returns the value for the given key if it exists, otherwise it panics.
+// 如果键存在, MustGet返回它的值, 否则它恐慌.
 func (c *Context) MustGet(key string) interface{} {
 	if value, exists := c.Get(key); exists {
 		return value
@@ -200,7 +200,7 @@ func (c *Context) MustGet(key string) interface{} {
 	panic("Key \"" + key + "\" does not exist")
 }
 
-// GetString returns the value associated with the key as a string.
+// GetString 返回与键关联的值作为字符串.
 func (c *Context) GetString(key string) (s string) {
 	if val, ok := c.Get(key); ok && val != nil {
 		s, _ = val.(string)
@@ -208,7 +208,7 @@ func (c *Context) GetString(key string) (s string) {
 	return
 }
 
-// GetBool returns the value associated with the key as a boolean.
+// GetBool 返回与见关联的值作为布尔值.
 func (c *Context) GetBool(key string) (b bool) {
 	if val, ok := c.Get(key); ok && val != nil {
 		b, _ = val.(bool)
@@ -216,7 +216,7 @@ func (c *Context) GetBool(key string) (b bool) {
 	return
 }
 
-// GetInt returns the value associated with the key as an integer.
+// GetInt  返回与见关联的值作为整数.
 func (c *Context) GetInt(key string) (i int) {
 	if val, ok := c.Get(key); ok && val != nil {
 		i, _ = val.(int)
@@ -224,7 +224,7 @@ func (c *Context) GetInt(key string) (i int) {
 	return
 }
 
-// GetInt64 returns the value associated with the key as an integer.
+// GetInt64  返回与见关联的值作为整数.
 func (c *Context) GetInt64(key string) (i64 int64) {
 	if val, ok := c.Get(key); ok && val != nil {
 		i64, _ = val.(int64)
@@ -232,7 +232,7 @@ func (c *Context) GetInt64(key string) (i64 int64) {
 	return
 }
 
-// GetFloat64 returns the value associated with the key as a float64.
+// GetFloat64 返回与见关联的值作为float64.
 func (c *Context) GetFloat64(key string) (f64 float64) {
 	if val, ok := c.Get(key); ok && val != nil {
 		f64, _ = val.(float64)
@@ -240,7 +240,7 @@ func (c *Context) GetFloat64(key string) (f64 float64) {
 	return
 }
 
-// GetTime returns the value associated with the key as time.
+// GetTime  返回与见关联的值作为时间.
 func (c *Context) GetTime(key string) (t time.Time) {
 	if val, ok := c.Get(key); ok && val != nil {
 		t, _ = val.(time.Time)
@@ -248,7 +248,7 @@ func (c *Context) GetTime(key string) (t time.Time) {
 	return
 }
 
-// GetDuration returns the value associated with the key as a duration.
+// GetDuration 返回与见关联的值作为时长.
 func (c *Context) GetDuration(key string) (d time.Duration) {
 	if val, ok := c.Get(key); ok && val != nil {
 		d, _ = val.(time.Duration)
@@ -256,7 +256,7 @@ func (c *Context) GetDuration(key string) (d time.Duration) {
 	return
 }
 
-// GetStringSlice returns the value associated with the key as a slice of strings.
+// GetStringSlice 返回与见关联的值作为字符串切片.
 func (c *Context) GetStringSlice(key string) (ss []string) {
 	if val, ok := c.Get(key); ok && val != nil {
 		ss, _ = val.([]string)
@@ -264,7 +264,7 @@ func (c *Context) GetStringSlice(key string) (ss []string) {
 	return
 }
 
-// GetStringMap returns the value associated with the key as a map of interfaces.
+// GetStringMap 返回与见关联的值作为map of interfaces.
 func (c *Context) GetStringMap(key string) (sm map[string]interface{}) {
 	if val, ok := c.Get(key); ok && val != nil {
 		sm, _ = val.(map[string]interface{})
@@ -272,7 +272,7 @@ func (c *Context) GetStringMap(key string) (sm map[string]interface{}) {
 	return
 }
 
-// GetStringMapString returns the value associated with the key as a map of strings.
+// GetStringMapString 返回与见关联的值作为a map of strings.
 func (c *Context) GetStringMapString(key string) (sms map[string]string) {
 	if val, ok := c.Get(key); ok && val != nil {
 		sms, _ = val.(map[string]string)
@@ -280,7 +280,7 @@ func (c *Context) GetStringMapString(key string) (sms map[string]string) {
 	return
 }
 
-// GetStringMapStringSlice returns the value associated with the key as a map to a slice of strings.
+// GetStringMapStringSlice 返回与见关联的值作为 map to a slice of strings.
 func (c *Context) GetStringMapStringSlice(key string) (smss map[string][]string) {
 	if val, ok := c.Get(key); ok && val != nil {
 		smss, _ = val.(map[string][]string)
@@ -289,11 +289,11 @@ func (c *Context) GetStringMapStringSlice(key string) (smss map[string][]string)
 }
 
 /************************************/
-/************ INPUT DATA ************/
+/************ 输入数据 ************/
 /************************************/
 
-// Param returns the value of the URL param.
-// It is a shortcut for c.Params.ByName(key)
+// Param返回URL Param的值.
+// 它是c.Params.ByName(key)的快捷方式
 //     router.GET("/user/:id", func(c *gin.Context) {
 //         // a GET request to /user/john
 //         id := c.Param("id") // id == "john"
@@ -302,9 +302,9 @@ func (c *Context) Param(key string) string {
 	return c.Params.ByName(key)
 }
 
-// Query returns the keyed url query value if it exists,
-// otherwise it returns an empty string `("")`.
-// It is shortcut for `c.Request.URL.Query().Get(key)`
+// 查询返回键入url 请求值, 如果它存在的话 ,
+// 否则返回一个空的字符串 `("")`.
+// 它是 `c.Request.URL.Query().Get(key)`的快捷方式
 //     GET /path?id=1234&name=Manu&value=
 // 	   c.Query("id") == "1234"
 // 	   c.Query("name") == "Manu"
@@ -315,9 +315,9 @@ func (c *Context) Query(key string) string {
 	return value
 }
 
-// DefaultQuery returns the keyed url query value if it exists,
-// otherwise it returns the specified defaultValue string.
-// See: Query() and GetQuery() for further information.
+// DefaultQuery 返回键入url 请求值, 如果它存在的话,
+// 否则返回指定的defaultValue（默认值）字符串.
+// 查看: Query() and GetQuery()以获得进一步的信息.
 //     GET /?name=Manu&lastname=
 //     c.DefaultQuery("name", "unknown") == "Manu"
 //     c.DefaultQuery("id", "none") == "none"
@@ -329,10 +329,10 @@ func (c *Context) DefaultQuery(key, defaultValue string) string {
 	return defaultValue
 }
 
-// GetQuery is like Query(), it returns the keyed url query value
-// if it exists `(value, true)` (even when the value is an empty string),
-// otherwise it returns `("", false)`.
-// It is shortcut for `c.Request.URL.Query().Get(key)`
+// GetQuery 类似 Query(), 返回键入url 请求值
+// `(value, true)`，如果存在 ， (即使值是空字符串),
+// 否则返回 `("", false)`.
+// 它是 `c.Request.URL.Query().Get(key)`的快捷方式
 //     GET /?name=Manu&lastname=
 //     ("Manu", true) == c.GetQuery("name")
 //     ("", false) == c.GetQuery("id")
@@ -560,7 +560,7 @@ func (c *Context) requestHeader(key string) string {
 }
 
 /************************************/
-/******** RESPONSE RENDERING ********/
+/******** 响应渲染 ********/
 /************************************/
 
 // bodyAllowedForStatus is a copy of http.bodyAllowedForStatus non-exported function.
@@ -740,7 +740,7 @@ func (c *Context) Stream(step func(w io.Writer) bool) {
 }
 
 /************************************/
-/******** CONTENT NEGOTIATION *******/
+/******** 内容协商 *******/
 /************************************/
 
 type Negotiate struct {
