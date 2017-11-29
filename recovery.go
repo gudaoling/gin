@@ -21,12 +21,12 @@ var (
 	slash     = []byte("/")
 )
 
-// Recovery returns a middleware that recovers from any panics and writes a 500 if there was one.
+//Recovery 会返回一个从任何恐慌中恢复的中间件，如果有的话，http写入状态码500
 func Recovery() HandlerFunc {
 	return RecoveryWithWriter(DefaultErrorWriter)
 }
 
-// RecoveryWithWriter returns a middleware for a given writer that recovers from any panics and writes a 500 if there was one.
+// RecoveryWithWriter 会返回一个从任何恐慌中恢复的中间件，如果有的话，http写入状态码500.
 func RecoveryWithWriter(out io.Writer) HandlerFunc {
 	var logger *log.Logger
 	if out != nil {
@@ -47,19 +47,19 @@ func RecoveryWithWriter(out io.Writer) HandlerFunc {
 	}
 }
 
-// stack returns a nicely formatted stack frame, skipping skip frames.
+// stack 返回一个格式良好的堆栈框架，跳过跳过帧.
 func stack(skip int) []byte {
 	buf := new(bytes.Buffer) // the returned data
-	// As we loop, we open files and read them. These variables record the currently
-	// loaded file.
+	//当我们循环时，我们打开文件并读取它们。这些变量记录当前的情况
+          //加载文件。
 	var lines [][]byte
 	var lastFile string
-	for i := skip; ; i++ { // Skip the expected number of frames
+	for i := skip; ; i++ { // 跳过预期的帧数
 		pc, file, line, ok := runtime.Caller(i)
 		if !ok {
 			break
 		}
-		// Print this much at least.  If we can't find the source, it won't show.
+		// 至少要打印这么多。如果我们找不到源，它就不会显示.
 		fmt.Fprintf(buf, "%s:%d (0x%x)\n", file, line, pc)
 		if file != lastFile {
 			data, err := ioutil.ReadFile(file)
@@ -74,25 +74,25 @@ func stack(skip int) []byte {
 	return buf.Bytes()
 }
 
-// source returns a space-trimmed slice of the n'th line.
+// source 在第n行中返回一个空格切割的部分.
 func source(lines [][]byte, n int) []byte {
-	n-- // in stack trace, lines are 1-indexed but our array is 0-indexed
+	n-- // 在堆栈跟踪中，行是1索引的但是我们的数组是0-索引的
 	if n < 0 || n >= len(lines) {
 		return dunno
 	}
 	return bytes.TrimSpace(lines[n])
 }
 
-// function returns, if possible, the name of the function containing the PC.
+// function 如果可能的话，返回包含PC的函数的名称.
 func function(pc uintptr) []byte {
 	fn := runtime.FuncForPC(pc)
 	if fn == nil {
 		return dunno
 	}
 	name := []byte(fn.Name())
-	// The name includes the path name to the package, which is unnecessary
-	// since the file name is already included.  Plus, it has center dots.
-	// That is, we see
+	//这个名称包含了包的路径名，这是不必要的
+	//因为文件名已经包含在内了。另外，它有中心点。
+	//这是我们看到的
 	//	runtime/debug.*T·ptrmethod
 	// and want
 	//	*T.ptrmethod
