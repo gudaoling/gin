@@ -22,20 +22,20 @@ type ResponseWriter interface {
 	http.Flusher
 	http.CloseNotifier
 
-	// Returns the HTTP response status code of the current request.
+	// 返回当前请求的HTTP响应状态码.
 	Status() int
 
-	// Returns the number of bytes already written into the response http body.
-	// See Written()
+	// 返回已写入响应http主体的字节数.
+	// 查看 Written()
 	Size() int
 
-	// Writes the string into the response body.
+	// 将字符串写入响应体中.
 	WriteString(string) (int, error)
 
-	// Returns true if the response body was already written.
+	// 如果响应主体已经写好了，返回true.
 	Written() bool
 
-	// Forces to write the http header (status code + headers).
+	//强制写入http header (status code + headers).
 	WriteHeaderNow()
 }
 
@@ -95,7 +95,7 @@ func (w *responseWriter) Written() bool {
 	return w.size != noWritten
 }
 
-// Hijack implements the http.Hijacker interface.
+// Hijack 实现 the http.Hijacker 接口.
 func (w *responseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	if w.size < 0 {
 		w.size = 0
@@ -103,12 +103,12 @@ func (w *responseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	return w.ResponseWriter.(http.Hijacker).Hijack()
 }
 
-// CloseNotify implements the http.CloseNotify interface.
+// CloseNotify 实现 the http.CloseNotify 接口.
 func (w *responseWriter) CloseNotify() <-chan bool {
 	return w.ResponseWriter.(http.CloseNotifier).CloseNotify()
 }
 
-// Flush implements the http.Flush interface.
+// Flush 实现 the http.Flush 接口.
 func (w *responseWriter) Flush() {
 	w.ResponseWriter.(http.Flusher).Flush()
 }
