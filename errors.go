@@ -65,12 +65,12 @@ func (msg *Error) JSON() interface{} {
 	return json
 }
 
-// MarshalJSON implements the json.Marshaller interface.
+// MarshalJSON 实现 json.Marshaller 接口.
 func (msg *Error) MarshalJSON() ([]byte, error) {
 	return json.Marshal(msg.JSON())
 }
 
-// Error implements the error interface
+// Error 实现 error 接口
 func (msg Error) Error() string {
 	return msg.Err.Error()
 }
@@ -79,8 +79,8 @@ func (msg *Error) IsType(flags ErrorType) bool {
 	return (msg.Type & flags) > 0
 }
 
-// ByType returns a readonly copy filtered the byte.
-// ie ByType(gin.ErrorTypePublic) returns a slice of errors with type=ErrorTypePublic.
+// ByType 返回一个只读拷贝过滤了字节.
+// 即 ByType(gin.ErrorTypePublic) 返回错误切片 type=ErrorTypePublic.
 func (a errorMsgs) ByType(typ ErrorType) errorMsgs {
 	if len(a) == 0 {
 		return nil
@@ -97,8 +97,8 @@ func (a errorMsgs) ByType(typ ErrorType) errorMsgs {
 	return result
 }
 
-// Last returns the last error in the slice. It returns nil if the array is empty.
-// Shortcut for errors[len(errors)-1].
+// Last 返回切片中的最后一个错误.如果数组为空，则返回nil.
+//  errors[len(errors)-1]的快捷方式.
 func (a errorMsgs) Last() *Error {
 	if length := len(a); length > 0 {
 		return a[length-1]
@@ -106,7 +106,7 @@ func (a errorMsgs) Last() *Error {
 	return nil
 }
 
-// Errors returns an array will all the error messages.
+// Errors 返回将所有错误消息的一个数组.
 // Example:
 // 		c.Error(errors.New("first"))
 // 		c.Error(errors.New("second"))
