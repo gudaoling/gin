@@ -24,11 +24,11 @@ const (
 	testCode
 )
 
-// DefaultWriter is the default io.Writer used the Gin for debug output and
-// middleware output like Logger() or Recovery().
-// Note that both Logger and Recovery provides custom ways to configure their
-// output io.Writer.
-// To support coloring in Windows use:
+// DefaultWriter是默认io.Writer值, 使用Gin进行调试输出 和
+// 中间件 就像 Logger() 或 Recovery().
+// 注意  Logger 和 Recovery 都提供了自定义方式来配置它们
+//  输出io.Writer.
+// 支持在Windows中使用颜色:
 // 		import "github.com/mattn/go-colorable"
 // 		gin.DefaultWriter = colorable.NewColorableStdout()
 var DefaultWriter io.Writer = os.Stdout
