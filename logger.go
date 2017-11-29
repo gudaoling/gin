@@ -25,17 +25,17 @@ var (
 	disableColor = false
 )
 
-// DisableConsoleColor disables color output in the console.
+// DisableConsoleColor 禁用控制台中的颜色输出.
 func DisableConsoleColor() {
 	disableColor = true
 }
 
-// ErrorLogger returns a handlerfunc for any error type.
+// ErrorLogger 返回一个任何错误类型的handlerfunc.
 func ErrorLogger() HandlerFunc {
 	return ErrorLoggerT(ErrorTypeAny)
 }
 
-// ErrorLoggerT returns a handlerfunc for a given error type.
+// ErrorLoggerT 返回一个给定类型的handlerfunc .
 func ErrorLoggerT(typ ErrorType) HandlerFunc {
 	return func(c *Context) {
 		c.Next()
@@ -46,14 +46,14 @@ func ErrorLoggerT(typ ErrorType) HandlerFunc {
 	}
 }
 
-// Logger instances a Logger middleware that will write the logs to gin.DefaultWriter.
-// By default gin.DefaultWriter = os.Stdout.
+// Logger实例 将日志写入到的Logger中间件 gin.DefaultWriter.
+//通过 默认 gin.DefaultWriter = os.Stdout.
 func Logger() HandlerFunc {
 	return LoggerWithWriter(DefaultWriter)
 }
 
-// LoggerWithWriter instance a Logger middleware with the specified writter buffer.
-// Example: os.Stdout, a file opened in write mode, a socket...
+// LoggerWithWriter 实例:一个带有指定的writter缓冲区的Logger中间件.
+// 例如: os.Stdout,一个在写模式下打开的文件, a socket...
 func LoggerWithWriter(out io.Writer, notlogged ...string) HandlerFunc {
 	isTerm := true
 
@@ -74,17 +74,17 @@ func LoggerWithWriter(out io.Writer, notlogged ...string) HandlerFunc {
 	}
 
 	return func(c *Context) {
-		// Start timer
+		// 开始计时器
 		start := time.Now()
 		path := c.Request.URL.Path
 		raw := c.Request.URL.RawQuery
 
-		// Process request
+		// 处理请求
 		c.Next()
 
-		// Log only when path is not being skipped
+		//  只有当路径没有被跳过时才使用Log
 		if _, ok := skip[path]; !ok {
-			// Stop timer
+			// 停止计时器
 			end := time.Now()
 			latency := end.Sub(start)
 
