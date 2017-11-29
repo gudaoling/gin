@@ -34,8 +34,8 @@ type IRoutes interface {
 	StaticFS(string, http.FileSystem) IRoutes
 }
 
-// RouterGroup is used internally to configure router, a RouterGroup is associated with a prefix
-// and an array of handlers (middleware).
+// RouterGroup在内部用于配置路由器，一个RouterGroup与一个前缀相关联
+//以及一系列的处理程序 (middleware).
 type RouterGroup struct {
 	Handlers HandlersChain
 	basePath string
@@ -45,14 +45,14 @@ type RouterGroup struct {
 
 var _ IRouter = &RouterGroup{}
 
-// Use adds middleware to the group, see example code in github.
+// 使用添加中间件到组，在github中查看示例代码。.
 func (group *RouterGroup) Use(middleware ...HandlerFunc) IRoutes {
 	group.Handlers = append(group.Handlers, middleware...)
 	return group.returnObj()
 }
 
-// Group creates a new router group. You should add all the routes that have common middlwares or the same path prefix.
-// For example, all the routes that use a common middlware for authorization could be grouped.
+//组创建一个新的路由器组。您应该添加所有具有普通中等或相同路径前缀的路由。
+//例如，所有使用公共的中间软件的路由都可以被分组。
 func (group *RouterGroup) Group(relativePath string, handlers ...HandlerFunc) *RouterGroup {
 	return &RouterGroup{
 		Handlers: group.combineHandlers(handlers),
@@ -71,17 +71,16 @@ func (group *RouterGroup) handle(httpMethod, relativePath string, handlers Handl
 	group.engine.addRoute(httpMethod, absolutePath, handlers)
 	return group.returnObj()
 }
+//Handle用给定的路径和方法注册一个新的请求Handle和中间件。
+//最后一个处理程序应该是实际的处理程序，其他的处理程序应该是可以并且应该在不同的路由之间共享的中间件。
+//在github上查看示例代码。
+/ /
+//用于GET、POST、PUT、PATCH和DELETE请求的相应的快捷方式
+//函数可以使用。
 
-// Handle registers a new request handle and middleware with the given path and method.
-// The last handler should be the real handler, the other ones should be middleware that can and should be shared among different routes.
-// See the example code in github.
-//
-// For GET, POST, PUT, PATCH and DELETE requests the respective shortcut
-// functions can be used.
-//
-// This function is intended for bulk loading and to allow the usage of less
-// frequently used, non-standardized or custom methods (e.g. for internal
-// communication with a proxy).
+//这个函数是用于批量加载的，并且允许使用更少的
+//经常使用、非标准化的或自定义的方法(例如内部的
+//与代理通信)。
 func (group *RouterGroup) Handle(httpMethod, relativePath string, handlers ...HandlerFunc) IRoutes {
 	if matches, err := regexp.MatchString("^[A-Z]+$", httpMethod); !matches || err != nil {
 		panic("http method " + httpMethod + " is not valid")
@@ -89,42 +88,42 @@ func (group *RouterGroup) Handle(httpMethod, relativePath string, handlers ...Ha
 	return group.handle(httpMethod, relativePath, handlers)
 }
 
-// POST is a shortcut for router.Handle("POST", path, handle).
+// POST 是 router.Handle("POST", path, handle)快捷方式.
 func (group *RouterGroup) POST(relativePath string, handlers ...HandlerFunc) IRoutes {
 	return group.handle("POST", relativePath, handlers)
 }
 
-// GET is a shortcut for router.Handle("GET", path, handle).
+// GET 是 router.Handle("GET", path, handle) 快捷方式.
 func (group *RouterGroup) GET(relativePath string, handlers ...HandlerFunc) IRoutes {
 	return group.handle("GET", relativePath, handlers)
 }
 
-// DELETE is a shortcut for router.Handle("DELETE", path, handle).
+// DELETE 是 router.Handle("DELETE", path, handle) 快捷方式.
 func (group *RouterGroup) DELETE(relativePath string, handlers ...HandlerFunc) IRoutes {
 	return group.handle("DELETE", relativePath, handlers)
 }
 
-// PATCH is a shortcut for router.Handle("PATCH", path, handle).
+// PATCH 是 router.Handle("PATCH", path, handle) 快捷方式.
 func (group *RouterGroup) PATCH(relativePath string, handlers ...HandlerFunc) IRoutes {
 	return group.handle("PATCH", relativePath, handlers)
 }
 
-// PUT is a shortcut for router.Handle("PUT", path, handle).
+// PUT 是 router.Handle("PUT", path, handle) 快捷方式.
 func (group *RouterGroup) PUT(relativePath string, handlers ...HandlerFunc) IRoutes {
 	return group.handle("PUT", relativePath, handlers)
 }
 
-// OPTIONS is a shortcut for router.Handle("OPTIONS", path, handle).
+// OPTIONS 是 router.Handle("OPTIONS", path, handle) 快捷方式.
 func (group *RouterGroup) OPTIONS(relativePath string, handlers ...HandlerFunc) IRoutes {
 	return group.handle("OPTIONS", relativePath, handlers)
 }
 
-// HEAD is a shortcut for router.Handle("HEAD", path, handle).
+// HEAD 是 router.Handle("HEAD", path, handle) 快捷方式.
 func (group *RouterGroup) HEAD(relativePath string, handlers ...HandlerFunc) IRoutes {
 	return group.handle("HEAD", relativePath, handlers)
 }
 
-// Any registers a route that matches all the HTTP methods.
+// Any  匹配所有的 HTTP methods.
 // GET, POST, PUT, PATCH, HEAD, OPTIONS, DELETE, CONNECT, TRACE.
 func (group *RouterGroup) Any(relativePath string, handlers ...HandlerFunc) IRoutes {
 	group.handle("GET", relativePath, handlers)
@@ -139,7 +138,7 @@ func (group *RouterGroup) Any(relativePath string, handlers ...HandlerFunc) IRou
 	return group.returnObj()
 }
 
-// StaticFile registers a single route in order to server a single file of the local filesystem.
+//StaticFile注册一条路径，以便为本地文件系统的单个文件服务。
 // router.StaticFile("favicon.ico", "./resources/favicon.ico")
 func (group *RouterGroup) StaticFile(relativePath, filepath string) IRoutes {
 	if strings.Contains(relativePath, ":") || strings.Contains(relativePath, "*") {
@@ -153,18 +152,18 @@ func (group *RouterGroup) StaticFile(relativePath, filepath string) IRoutes {
 	return group.returnObj()
 }
 
-// Static serves files from the given file system root.
-// Internally a http.FileServer is used, therefore http.NotFound is used instead
-// of the Router's NotFound handler.
-// To use the operating system's file system implementation,
-// use :
+//静态服务来自给定文件系统根的文件。
+// 内部http.FileServer被使用, 否则 使用http.NotFound 
+// Router's NotFound handler.
+// 使用操作系统的文件系统实现,
+// 用法 :
 //     router.Static("/static", "/var/www")
 func (group *RouterGroup) Static(relativePath, root string) IRoutes {
 	return group.StaticFS(relativePath, Dir(root, false))
 }
 
-// StaticFS works just like `Static()` but a custom `http.FileSystem` can be used instead.
-// Gin by default user: gin.Dir()
+// StaticFS 用于就像  `Static()` 但一个自定义 `http.FileSystem` 可以使用.
+// Gin 默认使用: gin.Dir()
 func (group *RouterGroup) StaticFS(relativePath string, fs http.FileSystem) IRoutes {
 	if strings.Contains(relativePath, ":") || strings.Contains(relativePath, "*") {
 		panic("URL parameters can not be used when serving a static folder")
