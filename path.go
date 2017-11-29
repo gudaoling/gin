@@ -5,19 +5,19 @@
 
 package gin
 
-// cleanPath is the URL version of path.Clean, it returns a canonical URL path
-// for p, eliminating . and .. elements.
+// cleanPath 是 path.Clean URL版本, 对于字符串P它返回一个规范的URL路径
+// , eliminating . and .. elements.
 //
-// The following rules are applied iteratively until no further processing can
+// 下列规则被重复应用，直到没有进一步的处理。
 // be done:
-//	1. Replace multiple slashes with a single slash.
-//	2. Eliminate each . path name element (the current directory).
-//	3. Eliminate each inner .. path name element (the parent directory)
+//	1. 用一个斜杠替换多个斜杠.
+//	2. 消除 each . path name element (the current directory).
+//	3. 消除 each inner .. path name element (the parent directory)
 //	   along with the non-.. element that precedes it.
-//	4. Eliminate .. elements that begin a rooted path:
+//	4. 消除 .. elements 开始有根路径的元素:
 //	   that is, replace "/.." by "/" at the beginning of a path.
 //
-// If the result of this process is an empty string, "/" is returned.
+// 如果这个过程的结果是一个空字符串，, 将返回"/" .
 func cleanPath(p string) string {
 	// Turn empty string into "/"
 	if p == "" {
@@ -109,7 +109,7 @@ func cleanPath(p string) string {
 	return string(buf[:w])
 }
 
-// internal helper to lazily create a buffer if necessary.
+// 内部帮助器在必要时惰性地创建一个缓冲区.
 func bufApp(buf *[]byte, s string, w int, c byte) {
 	if *buf == nil {
 		if s[w] == c {
